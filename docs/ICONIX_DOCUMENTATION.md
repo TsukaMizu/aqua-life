@@ -18,6 +18,7 @@
    - [3.5 Admin – Kelola Pengguna](#35-admin--kelola-pengguna)
 4. [Final Class Diagram](#4-final-class-diagram)
 5. [Struktur Kode: Model, Controller, Route](#5-struktur-kode-model-controller-route)
+6. [Software Requirements Specification (SRS)](#6-software-requirements-specification-srs)
 
 ---
 
@@ -1405,6 +1406,61 @@ AdminKelolaBobot ..> BioticFamily : manages
 | Method | Path                        | Controller & Method             | Keterangan                      |
 |--------|-----------------------------|---------------------------------|---------------------------------|
 | POST   | `/api/midtrans/webhook`     | `MidtransWebhookController@handle` | Dipanggil oleh Midtrans server |
+
+---
+
+## 6. Software Requirements Specification (SRS)
+
+Bagian ini mendokumentasikan kebutuhan perangkat lunak sistem AquaLife yang diturunkan langsung dari fitur-fitur yang terdapat pada routes, controllers, dan services di repository.
+
+### 6.1 Functional Requirements (FR)
+
+| NO | SRS-ID  | Deskripsi                                                                                                                                                     |
+|----|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 1  | FR-001  | Sistem menyediakan halaman beranda yang dapat diakses oleh Guest sebelum melakukan login (`GET /`).                                                           |
+| 2  | FR-002  | Sistem menyediakan fitur registrasi akun pengguna baru (`GET /registrasi`, `POST /actionRegister`).                                                           |
+| 3  | FR-003  | Sistem menyediakan fitur login dengan autentikasi berbasis session (`GET /login`, `POST /actionLogin`).                                                       |
+| 4  | FR-004  | Sistem menyediakan fitur logout untuk mengakhiri sesi pengguna yang sedang login (`POST /logout`).                                                            |
+| 5  | FR-005  | Sistem menyediakan fitur perhitungan kualitas air menggunakan algoritma WSM (Weighted Sum Model) untuk pengguna dengan role Member (`POST /member/hitung-kualitas-air`). |
+| 6  | FR-006  | Sistem menyediakan fitur perhitungan kualitas air menggunakan algoritma WSM untuk pengguna dengan role Operator (`POST /operator/hitung-kualitas-air`).       |
+| 7  | FR-007  | Sistem menyediakan fitur perhitungan kualitas air menggunakan algoritma WSM untuk pengguna dengan role Admin (`POST /admin/hitung-kualitas-air`).             |
+| 8  | FR-008  | Sistem menyimpan dan menampilkan riwayat (history) hasil perhitungan kualitas air untuk role Member (`GET /member/history`).                                  |
+| 9  | FR-009  | Sistem menyimpan dan menampilkan riwayat (history) hasil perhitungan kualitas air untuk role Operator (`GET /operator/history`).                              |
+| 10 | FR-010  | Sistem menyimpan dan menampilkan riwayat (history) hasil perhitungan kualitas air untuk role Admin (`GET /admin/history`).                                    |
+| 11 | FR-011  | Sistem menyediakan fitur melihat detail hasil perhitungan dari riwayat untuk Member (`GET /member/history/{id}/result`).                                      |
+| 12 | FR-012  | Sistem menyediakan fitur melihat detail hasil perhitungan dari riwayat untuk Operator (`GET /operator/history/{id}/result`).                                  |
+| 13 | FR-013  | Sistem menyediakan fitur melihat detail hasil perhitungan dari riwayat untuk Admin (`GET /admin/history/{id}/result`).                                        |
+| 14 | FR-014  | Sistem menyediakan fitur edit dan pembaruan data riwayat perhitungan untuk Member (`GET /member/history/{id}/edit`, `PUT /member/history/{id}`).              |
+| 15 | FR-015  | Sistem menyediakan fitur edit dan pembaruan data riwayat perhitungan untuk Operator (`GET /operator/history/{id}/edit`, `PUT /operator/history/{id}`).        |
+| 16 | FR-016  | Sistem menyediakan fitur edit dan pembaruan data riwayat perhitungan untuk Admin (`GET /admin/history/{id}/edit`, `PUT /admin/history/{id}`).                 |
+| 17 | FR-017  | Sistem menyediakan fitur pengajuan pembayaran membership melalui payment gateway Midtrans untuk Member (`POST /member/pembayaran`).                           |
+| 18 | FR-018  | Sistem menyediakan fitur pembaruan status pembayaran membership untuk Member (`PUT /member/pembayaran/{payment}`).                                            |
+| 19 | FR-019  | Sistem menyediakan fitur pembatalan/penghapusan pembayaran membership untuk Member (`DELETE /member/pembayaran/{payment}`).                                   |
+| 20 | FR-020  | Sistem menerima dan memproses notifikasi webhook dari Midtrans untuk memperbarui status pembayaran secara otomatis (`POST /api/midtrans/webhook`).            |
+| 21 | FR-021  | Sistem menyediakan fitur pengelolaan data stasiun pengukuran (CRUD) untuk Operator (`/operator/kelola-station`).                                              |
+| 22 | FR-022  | Sistem menyediakan fitur pengelolaan data stasiun pengukuran (CRUD) untuk Admin (`/admin/kelola-station`).                                                    |
+| 23 | FR-023  | Sistem menyediakan fitur melihat hasil perhitungan per stasiun untuk Operator (`GET /operator/kelola-station/{id}/result`).                                   |
+| 24 | FR-024  | Sistem menyediakan fitur melihat hasil perhitungan per stasiun untuk Admin (`GET /admin/kelola-station/{id}/result`).                                         |
+| 25 | FR-025  | Sistem menyediakan fitur pengelolaan bobot parameter main abiotic (CRUD) untuk Operator (`/operator/kelola-bobot/main-abiotic`).                              |
+| 26 | FR-026  | Sistem menyediakan fitur pengelolaan bobot parameter additional abiotic (CRUD) untuk Operator (`/operator/kelola-bobot/additional-abiotic`).                  |
+| 27 | FR-027  | Sistem menyediakan fitur pengelolaan bobot parameter biotic index (CRUD) untuk Operator (`/operator/kelola-bobot/biotic-index`).                              |
+| 28 | FR-028  | Sistem menyediakan fitur pengelolaan bobot parameter family biotic (CRUD) untuk Operator (`/operator/kelola-bobot/family-biotic`).                            |
+| 29 | FR-029  | Sistem menyediakan fitur pengelolaan bobot parameter (main abiotic, additional abiotic, biotic index, family biotic) untuk Admin (`/admin/kelola-bobot`).     |
+| 30 | FR-030  | Sistem menyediakan fitur pengelolaan data pembayaran seluruh pengguna untuk Admin (`GET /admin/kelola-pembayaran`).                                           |
+| 31 | FR-031  | Sistem menyediakan fitur pengelolaan akun pengguna (CRUD) termasuk pembuatan, pembaruan, dan penghapusan akun oleh Admin (`/admin/kelola-pengguna`).          |
+
+### 6.2 Non-Functional Requirements (NFR)
+
+| NO | SRS-ID  | Deskripsi                                                                                                                                                     |
+|----|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 1  | NFR-001 | Sistem mengimplementasikan kontrol akses berbasis peran (Role-Based Access Control) dengan tiga role utama: **member**, **operator**, dan **admin**.           |
+| 2  | NFR-002 | Sistem menggunakan middleware autentikasi (`auth`) untuk memastikan seluruh route yang memerlukan login hanya dapat diakses oleh pengguna yang sudah terautentikasi. |
+| 3  | NFR-003 | Sistem menggunakan middleware `guest` untuk memastikan halaman publik (beranda, login, registrasi) tidak dapat diakses kembali oleh pengguna yang sudah login. |
+| 4  | NFR-004 | Sistem dibangun menggunakan framework **Laravel 10** (PHP) sebagai backend dengan arsitektur MVC.                                                             |
+| 5  | NFR-005 | Sistem menggunakan **Inertia.js** dan **React.js** untuk antarmuka pengguna berbasis Single-Page Application (SPA).                                           |
+| 6  | NFR-006 | Sistem menggunakan **Tailwind CSS** untuk tampilan antarmuka yang responsif dan konsisten di berbagai ukuran layar.                                           |
+| 7  | NFR-007 | Sistem mengintegrasikan payment gateway **Midtrans** untuk pemrosesan transaksi pembayaran membership secara aman.                                            |
+| 8  | NFR-008 | Algoritma perhitungan kualitas air menggunakan metode **Weighted Sum Model (WSM)** berdasarkan parameter fisik-kimia, indeks biotik, dan keluarga biotik.     |
 
 ---
 
