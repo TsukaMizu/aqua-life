@@ -65,13 +65,13 @@
 | 1  | NFR-001 | Sistem mengimplementasikan autentikasi berbasis sesi (Laravel Session) sehingga halaman berproteksi hanya dapat diakses oleh pengguna yang login. | Member, Operator, Admin       |
 | 2  | NFR-002 | Sistem menerapkan kontrol akses berbasis peran (*Role-Based Access Control*): setiap peran hanya dapat mengakses rute yang diizinkan.             | Member, Operator, Admin       |
 | 3  | NFR-003 | Sistem melindungi semua permintaan *state-changing* (POST/PUT/DELETE) dengan token CSRF Laravel.                                                  | Member, Operator, Admin       |
-| 4  | NFR-004 | Sistem menggunakan HTTPS untuk memastikan kerahasiaan data yang dikirimkan antara klien dan server. *(Asumsi: dikonfigurasi di level deployment.)* | Guest, Member, Operator, Admin, Midtrans |
+| 4  | NFR-004 | Sistem menggunakan HTTPS untuk memastikan kerahasiaan data yang dikirimkan antara klien dan server.                                               | Guest, Member, Operator, Admin, Midtrans |
 | 5  | NFR-005 | Antarmuka pengguna dibangun dengan Inertia.js + Vue/React sehingga navigasi antar halaman berlangsung tanpa *full page reload* (SPA-like).        | Guest, Member, Operator, Admin |
 | 6  | NFR-006 | Webhook Midtrans diekspos melalui rute publik (`/api/midtrans/webhook`) tanpa middleware autentikasi sesi agar dapat diakses oleh server Midtrans.| Midtrans                      |
 | 7  | NFR-007 | Sistem harus dapat menangani kegagalan pembayaran dari Midtrans secara *graceful* (status transaksi diperbarui sesuai respons webhook).           | Midtrans                      |
 | 8  | NFR-008 | Kata sandi pengguna disimpan dalam bentuk *hash* menggunakan algoritma bcrypt bawaan Laravel.                                                     | Guest, Member, Operator, Admin |
 | 9  | NFR-009 | Seluruh validasi input formulir (pendaftaran, login, parameter kualitas air, dll.) dilakukan di sisi server sebelum data disimpan ke basis data.  | Guest, Member, Operator, Admin |
-| 10 | NFR-010 | Sistem harus dapat merespons permintaan halaman umum dalam waktu kurang dari 2 detik pada kondisi beban normal. *(Target performa deployment.)*   | Guest, Member, Operator, Admin |
+| 10 | NFR-010 | Sistem harus dapat merespons permintaan halaman umum dalam waktu kurang dari 2 detik pada kondisi beban normal.                                   | Guest, Member, Operator, Admin |
 
 ---
 
@@ -80,5 +80,6 @@
 1. **Peran default Member saat registrasi**: Berdasarkan kode `AuthController`, pengguna yang mendaftar secara mandiri mendapatkan peran *member*. Peran *operator* dan *admin* hanya dapat ditetapkan oleh Admin melalui halaman *Kelola Pengguna*.
 2. **Algoritma WSM**: Fitur "Hitung Kualitas Air" menggunakan *Weighted Sum Model* yang menggabungkan parameter abiotik dan biotik. Detail bobot dikelola melalui fitur *Kelola Bobot*.
 3. **Zona geografis dan tipe air**: Model `GeoZone` dan `WaterType` ada di *codebase* dan digunakan dalam data stasiun, namun tidak memiliki rute CRUD tersendiri yang terekspos – dianggap diinisialisasi melalui *database seeder/migration*.
-4. **NFR performa dan HTTPS** (NFR-004, NFR-010): Tidak dapat diverifikasi langsung dari *source code*; keduanya merupakan target standar yang diasumsikan diterapkan pada tahap deployment/konfigurasi server.
+4. **NFR-004 – HTTPS**: Tidak dapat diverifikasi langsung dari *source code*; diasumsikan diterapkan pada tahap deployment/konfigurasi server.
+5. **NFR-010 – Performa**: Target waktu respons kurang dari 2 detik adalah standar umum yang diasumsikan diterapkan pada konfigurasi server produksi.
 5. **Notifikasi alert kualitas air**: Tidak ditemukan `AlertService` atau mekanisme notifikasi otomatis (email/SMS) di *codebase* saat ini. FR hanya mencakup fitur yang terkonfirmasi ada.
