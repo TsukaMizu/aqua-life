@@ -1,0 +1,24 @@
+@startuml FR-027-PantauPembayaran
+' FR-027: Sistem menampilkan daftar transaksi pembayaran dari seluruh Member untuk dipantau Admin.
+' Aktor: Admin
+
+skinparam handwritten false
+skinparam defaultFontSize 12
+skinparam roundcorner 8
+
+title FR-027 – Pantau Transaksi Pembayaran Member\n(Aktor: Admin)
+
+actor Admin as A
+boundary "KelolaPembayaranPage\n(Inertia View)" as UI
+control "AdminKelolaPembayaran\n(Controller)" as Ctrl
+entity "Payment" as PaymentE
+entity "User" as UserE
+
+A --> UI : 1. Buka GET /admin/kelola-pembayaran
+UI --> Ctrl : 2. index()
+Ctrl --> PaymentE : 3. Payment::with('user')->orderBy('created_at','desc')->get()
+PaymentE --> UserE : 4. Load relasi User (pemilik transaksi)
+Ctrl --> UI : 5. Render daftar transaksi pembayaran
+UI --> A : 6. Tampilkan tabel pembayaran (order_id, nama Member,\nstatus, tanggal)
+
+@enduml

@@ -1,0 +1,52 @@
+@startuml FR-007-008-HitungKualitasAir
+' FR-007: Sistem menampilkan formulir perhitungan kualitas air (parameter abiotik utama,
+'         abiotik tambahan, dan indeks biotik).
+' FR-008: Sistem menghitung skor kualitas air menggunakan algoritma WSM dan menyimpan hasilnya.
+' Aktor: Member, Operator, Admin
+
+skinparam handwritten false
+skinparam defaultFontSize 12
+skinparam roundcorner 8
+
+title FR-007 & FR-008 – Hitung Kualitas Air (Form + Kalkulasi WSM)\n(Aktor: Member / Operator / Admin)
+
+actor "Member/Operator/Admin" as U
+boundary "HitungKualitasAirPage\n(Inertia View)" as UI
+control "HitungKualitasAirController\n(Member/Operator/Admin)" as Ctrl
+control "WSMCalculator\n(Private Methods)" as Calc
+entity "Station" as StationE
+entity "StationMainAbiotic" as SMAE
+entity "StationIndexAdditional" as SIAE
+entity "Species" as SpeciesE
+entity "MainAbioticParameter" as MAPE
+entity "AdditionalAbioticParameter" as AAPE
+entity "BioticIndexParameter" as BIPE
+entity "BioticFamily" as BFE
+entity "Result" as ResultE
+
+' FR-007: tampilkan form
+U --> UI : 1. Buka GET /hitung-kualitas-air
+UI --> Ctrl : 2. index()
+Ctrl --> MAPE : 3. Ambil GeoZone, WaterType
+Ctrl --> BFE : 4. Ambil daftar BioticFamily
+Ctrl --> UI : 5. Render form + data referensi
+UI --> U : 6. Tampilkan formulir perhitungan kualitas air
+
+' FR-008: proses kalkulasi WSM dan simpan
+U --> UI : 7. Submit form (nama stasiun, parameter abiotik & biotik)
+UI --> Ctrl : 8. store(Request)
+Ctrl --> Ctrl : 9. Validasi input
+Ctrl --> StationE : 10. Station::create({name, id_geo_zone,\nid_type_water, id_user})
+Ctrl --> SMAE : 11. StationMainAbiotic::create({id_station,\nph, temperature, dissolved_oxygen, ...})
+Ctrl --> SIAE : 12. StationIndexAdditional::create({id_station,\nsimilarity, dominance, diversity, ...})
+Ctrl --> SpeciesE : 13. Species::create() [opsional, per family]
+Ctrl --> Calc : 14. Kalkulasi WSM
+Calc --> MAPE : 15. Query bobot parameter abiotic utama
+Calc --> AAPE : 16. Query bobot parameter abiotic tambahan
+Calc --> BIPE : 17. Query bobot indeks biotik
+Calc --> BFE : 18. Query bobot family biotik
+Calc --> Ctrl : 19. finalValue, status, conclusion, recommendation
+Ctrl --> ResultE : 20. Result::create({value, status, conclusion,\nrecommendation, id_user, id_station})
+Ctrl --> UI : 21. redirect()->back() + flash success
+
+@enduml

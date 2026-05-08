@@ -1,0 +1,26 @@
+@startuml FR-009-LihatHistory
+' FR-009: Sistem menampilkan daftar riwayat penilaian kualitas air milik pengguna yang sedang login.
+' Aktor: Member, Operator, Admin
+
+skinparam handwritten false
+skinparam defaultFontSize 12
+skinparam roundcorner 8
+
+title FR-009 – Lihat Riwayat Penilaian Kualitas Air\n(Aktor: Member / Operator / Admin)
+
+actor "Member/Operator/Admin" as U
+boundary "HistoryPage\n(Inertia View)" as UI
+control "HistoryController\n(Member/Operator/Admin)" as Ctrl
+entity "Result" as ResultE
+entity "Station" as StationE
+entity "User" as UserE
+
+U --> UI : 1. Buka GET /history
+UI --> Ctrl : 2. index()
+Ctrl --> UserE : 3. Ambil data pengguna yang sedang login (auth()->user())
+Ctrl --> ResultE : 4. Result::where('id_user', $userId)\n->with('station')->get()
+ResultE --> StationE : 5. Load relasi Station
+Ctrl --> UI : 6. Render daftar riwayat penilaian
+UI --> U : 7. Tampilkan tabel history (stasiun, nilai, status, tanggal)
+
+@enduml

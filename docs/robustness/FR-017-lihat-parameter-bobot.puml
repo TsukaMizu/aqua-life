@@ -1,0 +1,29 @@
+@startuml FR-017-LihatParameterBobot
+' FR-017: Sistem menampilkan daftar parameter bobot (abiotik utama, abiotik tambahan,
+'         indeks biotik, dan keluarga biotik) yang digunakan dalam WSM.
+' Aktor: Operator, Admin
+
+skinparam handwritten false
+skinparam defaultFontSize 12
+skinparam roundcorner 8
+
+title FR-017 – Lihat Daftar Parameter Bobot WSM\n(Aktor: Operator / Admin)
+
+actor "Operator/Admin" as U
+boundary "KelolaBobotPage\n(Inertia View)" as UI
+control "KelolaBobotController\n(Operator/Admin)" as Ctrl
+entity "MainAbioticParameter" as MAPE
+entity "AdditionalAbioticParameter" as AAPE
+entity "BioticIndexParameter" as BIPE
+entity "BioticFamily" as BFE
+
+U --> UI : 1. Buka GET /kelola-bobot
+UI --> Ctrl : 2. index()
+Ctrl --> MAPE : 3. MainAbioticParameter::all()
+Ctrl --> AAPE : 4. AdditionalAbioticParameter::all()
+Ctrl --> BIPE : 5. BioticIndexParameter::all()
+Ctrl --> BFE : 6. BioticFamily::all()
+Ctrl --> UI : 7. Render halaman kelola bobot dengan semua data parameter
+UI --> U : 8. Tampilkan daftar parameter (tab: Abiotik Utama, Abiotik Tambahan,\nIndeks Biotik, Keluarga Biotik)
+
+@enduml

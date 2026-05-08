@@ -1,0 +1,38 @@
+@startuml FR-028-029-Pembayaran
+' FR-028: Sistem menampilkan halaman pembayaran bagi Member untuk berlangganan atau memperpanjang akses.
+' FR-029: Sistem membuat transaksi pembayaran baru dan mengintegrasikan proses pembayaran dengan Midtrans.
+' Aktor: Member
+
+skinparam handwritten false
+skinparam defaultFontSize 12
+skinparam roundcorner 8
+
+title FR-028 & FR-029 – Halaman Pembayaran & Buat Transaksi (Midtrans)\n(Aktor: Member)
+
+actor Member as M
+boundary "PembayaranPage\n(Inertia View)" as UI
+control "MemberPembayaran\n(Controller)" as Ctrl
+control "MidtransService\n(Snap API)" as MTS
+entity "Payment" as PaymentE
+entity "User" as UserE
+
+' FR-028: tampilkan halaman pembayaran
+M --> UI : 1. Buka GET /member/pembayaran
+UI --> Ctrl : 2. index()
+Ctrl --> PaymentE : 3. Ambil riwayat pembayaran milik Member saat ini
+Ctrl --> UserE : 4. Ambil info membership (is_membership, membership_end_at)
+Ctrl --> UI : 5. Render halaman pembayaran
+UI --> M : 6. Tampilkan status membership & riwayat pembayaran
+
+' FR-029: buat transaksi baru + integrasi Midtrans
+M --> UI : 7. Klik "Bayar" / submit form (POST /member/pembayaran)
+UI --> Ctrl : 8. store(Request)
+Ctrl --> Ctrl : 9. Validasi (tidak ada transaksi pending)
+Ctrl --> PaymentE : 10. Payment::create({order_id, status='pending', id_user})
+Ctrl --> MTS : 11. Snap::createTransaction({order_id, gross_amount, customer})
+MTS --> Ctrl : 12. snap_token
+Ctrl --> PaymentE : 13. $payment->update({snap_token})
+Ctrl --> UI : 14. redirect()->back() + snap_token + flash success
+UI --> M : 15. Tampilkan Midtrans Payment Popup (dengan snap_token)
+
+@enduml

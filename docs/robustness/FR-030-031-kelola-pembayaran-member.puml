@@ -1,0 +1,34 @@
+@startuml FR-030-031-KelolaPembayaranMember
+' FR-030: Sistem memungkinkan Member memperbarui status pembayaran secara manual
+'         (misalnya membatalkan sebelum diproses).
+' FR-031: Sistem memungkinkan Member menghapus data pembayaran yang belum selesai.
+' Aktor: Member
+
+skinparam handwritten false
+skinparam defaultFontSize 12
+skinparam roundcorner 8
+
+title FR-030 & FR-031 – Perbarui & Hapus Pembayaran (Member)\n(Aktor: Member)
+
+actor Member as M
+boundary "PembayaranPage\n(Inertia View)" as UI
+control "MemberPembayaran\n(Controller)" as Ctrl
+entity "Payment" as PaymentE
+
+' FR-030: perbarui status pembayaran (batalkan)
+M --> UI : 1. Klik "Batalkan" pembayaran (PUT /member/pembayaran/{payment})
+UI --> Ctrl : 2. update($payment, Request)
+Ctrl --> Ctrl : 3. Validasi kepemilikan (payment->id_user == auth->id)\n& status masih pending
+Ctrl --> PaymentE : 4. $payment->update({status='cancelled'})
+Ctrl --> UI : 5. redirect()->back() + flash success
+UI --> M : 6. Tampilkan status pembayaran yang diperbarui
+
+' FR-031: hapus data pembayaran
+M --> UI : 7. Konfirmasi hapus (DELETE /member/pembayaran/{payment})
+UI --> Ctrl : 8. destroy($payment)
+Ctrl --> Ctrl : 9. Validasi kepemilikan & status belum selesai
+Ctrl --> PaymentE : 10. $payment->delete()
+Ctrl --> UI : 11. redirect()->back() + flash success
+UI --> M : 12. Tampilkan konfirmasi penghapusan
+
+@enduml

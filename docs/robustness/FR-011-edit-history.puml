@@ -1,0 +1,51 @@
+@startuml FR-011-EditHistory
+' FR-011: Sistem memungkinkan pengguna mengedit data input dari riwayat penilaian yang sudah ada
+'         dan menyimpan pembaruan hasilnya.
+' Aktor: Member, Operator, Admin
+
+skinparam handwritten false
+skinparam defaultFontSize 12
+skinparam roundcorner 8
+
+title FR-011 – Edit Riwayat Penilaian\n(Aktor: Member / Operator / Admin)
+
+actor "Member/Operator/Admin" as U
+boundary "HistoryEditPage\n(Inertia View)" as UI
+control "HistoryController\n(Member/Operator/Admin)" as Ctrl
+control "WSMCalculator\n(Private Methods)" as Calc
+entity "Result" as ResultE
+entity "Station" as StationE
+entity "StationMainAbiotic" as SMAE
+entity "StationIndexAdditional" as SIAE
+entity "Species" as SpeciesE
+entity "MainAbioticParameter" as MAPE
+entity "AdditionalAbioticParameter" as AAPE
+entity "BioticIndexParameter" as BIPE
+entity "BioticFamily" as BFE
+
+' Tampilkan form edit
+U --> UI : 1. Buka GET /history/{id}/edit
+UI --> Ctrl : 2. edit($id)
+Ctrl --> ResultE : 3. Ambil Result dengan relasi Station & data abiotic/biotik
+Ctrl --> MAPE : 4. Ambil data referensi (GeoZone, WaterType, BioticFamily)
+Ctrl --> UI : 5. Render form edit dengan data saat ini
+UI --> U : 6. Tampilkan form edit terisi
+
+' Simpan pembaruan
+U --> UI : 7. Submit perubahan data
+UI --> Ctrl : 8. update($id, Request)
+Ctrl --> Ctrl : 9. Validasi input
+Ctrl --> StationE : 10. Station::update({name, id_geo_zone, id_type_water})
+Ctrl --> SMAE : 11. StationMainAbiotic::update({ph, temperature, ...})
+Ctrl --> SIAE : 12. StationIndexAdditional::update({similarity, dominance, ...})
+Ctrl --> SpeciesE : 13. Sync Species [opsional]
+Ctrl --> Calc : 14. Kalkulasi ulang WSM
+Calc --> MAPE : 15. Query bobot parameter
+Calc --> AAPE : 16. Query bobot parameter tambahan
+Calc --> BIPE : 17. Query bobot indeks biotik
+Calc --> BFE : 18. Query bobot family biotik
+Calc --> Ctrl : 19. finalValue, status, conclusion, recommendation
+Ctrl --> ResultE : 20. Result::update({value, status, conclusion, recommendation})
+Ctrl --> UI : 21. redirect() + flash success
+
+@enduml

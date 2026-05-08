@@ -1,0 +1,36 @@
+@startuml FR-022-ParamKeluargaBiotik
+' FR-022: Sistem memungkinkan penambahan, pembaruan, dan penghapusan parameter keluarga biotik.
+' Aktor: Operator, Admin
+
+skinparam handwritten false
+skinparam defaultFontSize 12
+skinparam roundcorner 8
+
+title FR-022 – CRUD Parameter Keluarga Biotik\n(Aktor: Operator / Admin)
+
+actor "Operator/Admin" as U
+boundary "KelolaBobotPage\n(Inertia View)" as UI
+control "KelolaBobotController\n(Operator/Admin)" as Ctrl
+entity "BioticFamily" as BFE
+
+' Tambah
+U --> UI : 1. Submit form tambah (POST /kelola-bobot/family-biotic)
+UI --> Ctrl : 2. storeFamilyBiotic(Request)
+Ctrl --> Ctrl : 3. Validasi input (name, weight)
+Ctrl --> BFE : 4. BioticFamily::create({name, weight})
+Ctrl --> UI : 5. redirect()->back() + flash success
+
+' Perbarui
+U --> UI : 6. Submit form edit (PUT /kelola-bobot/family-biotic/{parameter})
+UI --> Ctrl : 7. updateFamilyBiotic($parameter, Request)
+Ctrl --> Ctrl : 8. Validasi input
+Ctrl --> BFE : 9. $parameter->update({name, weight})
+Ctrl --> UI : 10. redirect()->back() + flash success
+
+' Hapus
+U --> UI : 11. Konfirmasi hapus (DELETE /kelola-bobot/family-biotic/{parameter})
+UI --> Ctrl : 12. destroyFamilyBiotic($parameter)
+Ctrl --> BFE : 13. $parameter->delete()
+Ctrl --> UI : 14. redirect()->back() + flash success
+
+@enduml

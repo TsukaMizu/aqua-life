@@ -1,0 +1,36 @@
+@startuml FR-002-003-Registrasi
+' FR-002: Sistem menyediakan formulir pendaftaran akun baru (registrasi).
+' FR-003: Sistem memproses data pendaftaran dan membuat akun pengguna baru dengan peran default member.
+' Aktor: Guest
+
+skinparam handwritten false
+skinparam defaultFontSize 12
+skinparam roundcorner 8
+
+title FR-002 & FR-003 – Registrasi Pengguna\n(Aktor: Guest)
+
+actor Guest as G
+boundary "RegistrasiPage\n(Inertia View)" as UI
+control "AuthController" as Ctrl
+entity "User" as UserE
+
+' FR-002: tampilkan form
+G --> UI : 1. Buka GET /registrasi
+UI --> Ctrl : 2. register()
+Ctrl --> UI : 3. Render form registrasi
+UI --> G : 4. Tampilkan form (nama, email, password)
+
+' FR-003: proses pendaftaran
+G --> UI : 5. Submit form (nama, email, password)
+UI --> Ctrl : 6. actionRegister(Request)
+Ctrl --> Ctrl : 7. Validasi input\n(nama min:3, email unik, password min:8, confirmed)
+alt Validasi Gagal
+    Ctrl --> UI : 8a. redirect()->back() + withErrors()
+    UI --> G : Tampilkan pesan error
+else Validasi Berhasil
+    Ctrl --> UserE : 8b. User::create({name, email, hash(password),\nrole='member', is_membership=false})
+    Ctrl --> UI : 9. redirect('/login') + flash success
+    UI --> G : 10. Tampilkan halaman login
+end
+
+@enduml

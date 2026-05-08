@@ -1,0 +1,24 @@
+@startuml FR-006-Logout
+' FR-006: Sistem memproses logout dan mengakhiri sesi pengguna yang sedang aktif.
+' Aktor: Member, Operator, Admin
+
+skinparam handwritten false
+skinparam defaultFontSize 12
+skinparam roundcorner 8
+
+title FR-006 – Logout\n(Aktor: Member / Operator / Admin)
+
+actor "Member/Operator/Admin" as U
+boundary "NavbarUI\n(Inertia View)" as UI
+control "AuthController" as Ctrl
+entity "Session" as SessionE
+
+U --> UI : 1. Klik tombol Logout
+UI --> Ctrl : 2. POST /logout (actionLogout)
+Ctrl --> SessionE : 3. Auth::logout()
+Ctrl --> SessionE : 4. session()->invalidate()
+Ctrl --> SessionE : 5. session()->regenerateToken()
+Ctrl --> UI : 6. redirect()->route('login')
+UI --> U : 7. Tampilkan halaman Login
+
+@enduml

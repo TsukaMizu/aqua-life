@@ -7,6 +7,37 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## Dokumentasi Proyek
+
+### ICONIX Process Documentation
+- [ICONIX Documentation](docs/ICONIX_DOCUMENTATION.md) – Use Case, Domain Model, Robustness, Sequence, dan Class Diagram
+- [SRS – Functional Requirements](docs/srs.md) – Tabel aktor, FR-001 s.d. FR-032, dan NFR
+- [Robustness Diagrams (PlantUML)](docs/robustness/) – Satu file `.puml` per FR atau kelompok FR berdekatan:
+
+| File | FR yang Dicakup | Deskripsi |
+|------|-----------------|-----------|
+| [FR-001-beranda.puml](docs/robustness/FR-001-beranda.puml) | FR-001 | Lihat Halaman Beranda (Guest) |
+| [FR-002-003-registrasi.puml](docs/robustness/FR-002-003-registrasi.puml) | FR-002, FR-003 | Registrasi Pengguna (Guest) |
+| [FR-004-005-login.puml](docs/robustness/FR-004-005-login.puml) | FR-004, FR-005 | Login & Redirect Berdasarkan Peran |
+| [FR-006-logout.puml](docs/robustness/FR-006-logout.puml) | FR-006 | Logout |
+| [FR-007-008-hitung-kualitas-air.puml](docs/robustness/FR-007-008-hitung-kualitas-air.puml) | FR-007, FR-008 | Hitung Kualitas Air (Form + WSM) |
+| [FR-009-lihat-history.puml](docs/robustness/FR-009-lihat-history.puml) | FR-009 | Lihat Riwayat Penilaian |
+| [FR-010-detail-hasil.puml](docs/robustness/FR-010-detail-hasil.puml) | FR-010 | Detail Hasil Penilaian |
+| [FR-011-edit-history.puml](docs/robustness/FR-011-edit-history.puml) | FR-011 | Edit Riwayat Penilaian |
+| [FR-012-015-kelola-stasiun.puml](docs/robustness/FR-012-015-kelola-stasiun.puml) | FR-012–FR-015 | Kelola Stasiun (CRUD) |
+| [FR-016-hasil-penilaian-stasiun.puml](docs/robustness/FR-016-hasil-penilaian-stasiun.puml) | FR-016 | Lihat & Perbarui Hasil Penilaian Stasiun |
+| [FR-017-lihat-parameter-bobot.puml](docs/robustness/FR-017-lihat-parameter-bobot.puml) | FR-017 | Lihat Daftar Parameter Bobot WSM |
+| [FR-018-019-param-abiotic-utama.puml](docs/robustness/FR-018-019-param-abiotic-utama.puml) | FR-018, FR-019 | Tambah/Perbarui/Hapus Param Abiotik Utama |
+| [FR-020-param-abiotic-tambahan.puml](docs/robustness/FR-020-param-abiotic-tambahan.puml) | FR-020 | CRUD Param Abiotik Tambahan |
+| [FR-021-param-indeks-biotik.puml](docs/robustness/FR-021-param-indeks-biotik.puml) | FR-021 | CRUD Param Indeks Biotik |
+| [FR-022-param-keluarga-biotik.puml](docs/robustness/FR-022-param-keluarga-biotik.puml) | FR-022 | CRUD Param Keluarga Biotik |
+| [FR-023-026-kelola-pengguna.puml](docs/robustness/FR-023-026-kelola-pengguna.puml) | FR-023–FR-026 | Kelola Pengguna (CRUD) – Admin |
+| [FR-027-pantau-pembayaran.puml](docs/robustness/FR-027-pantau-pembayaran.puml) | FR-027 | Pantau Transaksi Pembayaran – Admin |
+| [FR-028-029-pembayaran.puml](docs/robustness/FR-028-029-pembayaran.puml) | FR-028, FR-029 | Halaman & Buat Transaksi Pembayaran (Midtrans) |
+| [FR-030-031-kelola-pembayaran-member.puml](docs/robustness/FR-030-031-kelola-pembayaran-member.puml) | FR-030, FR-031 | Perbarui & Hapus Pembayaran (Member) |
+
+---
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:

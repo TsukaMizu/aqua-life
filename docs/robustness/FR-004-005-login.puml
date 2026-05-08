@@ -1,0 +1,43 @@
+@startuml FR-004-005-Login
+' FR-004: Sistem menyediakan formulir login dan mengautentikasi pengguna berdasarkan kredensial.
+' FR-005: Sistem mengarahkan pengguna yang telah login ke halaman sesuai peran.
+' Aktor: Guest → Member / Operator / Admin
+
+skinparam handwritten false
+skinparam defaultFontSize 12
+skinparam roundcorner 8
+
+title FR-004 & FR-005 – Login & Redirect Berdasarkan Peran\n(Aktor: Guest)
+
+actor Guest as G
+boundary "LoginPage\n(Inertia View)" as UI
+control "AuthController" as Ctrl
+entity "User" as UserE
+entity "Session" as SessionE
+
+' FR-004: tampilkan form login
+G --> UI : 1. Buka GET /login
+UI --> Ctrl : 2. login()
+Ctrl --> UI : 3. Render form login
+UI --> G : 4. Tampilkan form (email, password)
+
+' FR-004: autentikasi
+G --> UI : 5. Submit {email, password}
+UI --> Ctrl : 6. actionLogin(Request)
+Ctrl --> UserE : 7. Auth::attempt({email, password})
+alt Autentikasi Gagal
+    Ctrl --> UI : 8a. back() + flash error "Email atau Password Salah"
+    UI --> G : Tampilkan pesan error
+else Autentikasi Berhasil
+    Ctrl --> SessionE : 8b. session()->regenerate()
+    ' FR-005: redirect sesuai role
+    alt role == 'member'
+        Ctrl --> UI : 9a. redirect()->route('member.history')
+    else role == 'operator'
+        Ctrl --> UI : 9b. redirect()->route('operator.history')
+    else role == 'admin'
+        Ctrl --> UI : 9c. redirect()->route('admin.kelola-pengguna')
+    end
+end
+
+@enduml

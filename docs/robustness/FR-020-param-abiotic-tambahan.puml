@@ -1,0 +1,36 @@
+@startuml FR-020-ParamAbioticTambahan
+' FR-020: Sistem memungkinkan penambahan, pembaruan, dan penghapusan parameter bobot abiotik tambahan.
+' Aktor: Operator, Admin
+
+skinparam handwritten false
+skinparam defaultFontSize 12
+skinparam roundcorner 8
+
+title FR-020 – CRUD Parameter Bobot Abiotik Tambahan\n(Aktor: Operator / Admin)
+
+actor "Operator/Admin" as U
+boundary "KelolaBobotPage\n(Inertia View)" as UI
+control "KelolaBobotController\n(Operator/Admin)" as Ctrl
+entity "AdditionalAbioticParameter" as AAPE
+
+' Tambah
+U --> UI : 1. Submit form tambah (POST /kelola-bobot/additional-abiotic)
+UI --> Ctrl : 2. storeAdditionalAbiotic(Request)
+Ctrl --> Ctrl : 3. Validasi input (name, initial_value, final_value, weight)
+Ctrl --> AAPE : 4. AdditionalAbioticParameter::create({name, initial_value,\nfinal_value, weight})
+Ctrl --> UI : 5. redirect()->back() + flash success
+
+' Perbarui
+U --> UI : 6. Submit form edit (PUT /kelola-bobot/additional-abiotic/{parameter})
+UI --> Ctrl : 7. updateAdditionalAbiotic($parameter, Request)
+Ctrl --> Ctrl : 8. Validasi input
+Ctrl --> AAPE : 9. $parameter->update({name, initial_value, final_value, weight})
+Ctrl --> UI : 10. redirect()->back() + flash success
+
+' Hapus
+U --> UI : 11. Konfirmasi hapus (DELETE /kelola-bobot/additional-abiotic/{parameter})
+UI --> Ctrl : 12. destroyAdditionalAbiotic($parameter)
+Ctrl --> AAPE : 13. $parameter->delete()
+Ctrl --> UI : 14. redirect()->back() + flash success
+
+@enduml

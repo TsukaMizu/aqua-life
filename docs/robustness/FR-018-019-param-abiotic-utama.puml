@@ -1,0 +1,41 @@
+@startuml FR-018-019-ParamAbioticUtama
+' FR-018: Sistem memungkinkan penambahan parameter bobot abiotik utama beserta nilai bobotnya.
+' FR-019: Sistem memungkinkan pembaruan dan penghapusan parameter bobot abiotik utama.
+' Aktor: Operator, Admin
+
+skinparam handwritten false
+skinparam defaultFontSize 12
+skinparam roundcorner 8
+
+title FR-018 & FR-019 – Tambah / Perbarui / Hapus Parameter Bobot Abiotik Utama\n(Aktor: Operator / Admin)
+
+actor "Operator/Admin" as U
+boundary "KelolaBobotPage\n(Inertia View)" as UI
+control "KelolaBobotController\n(Operator/Admin)" as Ctrl
+entity "MainAbioticParameter" as MAPE
+entity "GeoZone" as GeoZoneE
+entity "WaterType" as WaterTypeE
+
+' FR-018: tambah parameter abiotik utama
+U --> UI : 1. Submit form tambah (POST /kelola-bobot/main-abiotic)
+UI --> Ctrl : 2. storeMainAbiotic(Request)
+Ctrl --> Ctrl : 3. Validasi input (name, initial_value, final_value, weight,\nid_geo_zone, id_type_water)
+Ctrl --> GeoZoneE : 4. Verifikasi GeoZone
+Ctrl --> WaterTypeE : 5. Verifikasi WaterType
+Ctrl --> MAPE : 6. MainAbioticParameter::create({name, initial_value,\nfinal_value, weight, id_geo_zone, id_type_water})
+Ctrl --> UI : 7. redirect()->back() + flash success
+
+' FR-019: perbarui parameter abiotik utama
+U --> UI : 8. Submit form edit (PUT /kelola-bobot/main-abiotic/{parameter})
+UI --> Ctrl : 9. updateMainAbiotic($parameter, Request)
+Ctrl --> Ctrl : 10. Validasi input
+Ctrl --> MAPE : 11. $parameter->update({name, initial_value, final_value,\nweight, id_geo_zone, id_type_water})
+Ctrl --> UI : 12. redirect()->back() + flash success
+
+' FR-019: hapus parameter abiotik utama
+U --> UI : 13. Konfirmasi hapus (DELETE /kelola-bobot/main-abiotic/{parameter})
+UI --> Ctrl : 14. destroyMainAbiotic($parameter)
+Ctrl --> MAPE : 15. $parameter->delete()
+Ctrl --> UI : 16. redirect()->back() + flash success
+
+@enduml

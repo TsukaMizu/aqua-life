@@ -1,0 +1,46 @@
+@startuml FR-023-026-KelolaPengguna
+' FR-023: Sistem menampilkan daftar seluruh pengguna terdaftar beserta peran dan statusnya.
+' FR-024: Sistem memungkinkan Admin membuat akun pengguna baru secara langsung (dengan peran yang dapat ditentukan).
+' FR-025: Sistem memungkinkan Admin memperbarui data dan peran pengguna yang sudah ada.
+' FR-026: Sistem memungkinkan Admin menghapus akun pengguna.
+' Aktor: Admin
+
+skinparam handwritten false
+skinparam defaultFontSize 12
+skinparam roundcorner 8
+
+title FR-023 – FR-026 – Kelola Pengguna (CRUD)\n(Aktor: Admin)
+
+actor Admin as A
+boundary "KelolaPenggunaPage\n(Inertia View)" as UI
+control "AdminKelolaPengguna\n(Controller)" as Ctrl
+entity "User" as UserE
+
+' FR-023: tampilkan daftar pengguna
+A --> UI : 1. Buka GET /admin/kelola-pengguna
+UI --> Ctrl : 2. index()
+Ctrl --> UserE : 3. User::all()
+Ctrl --> UI : 4. Render daftar pengguna
+UI --> A : 5. Tampilkan tabel pengguna (nama, email, peran, status membership)
+
+' FR-024: tambah pengguna
+A --> UI : 6. Submit form tambah pengguna (POST /admin/kelola-pengguna)
+UI --> Ctrl : 7. store(Request)
+Ctrl --> Ctrl : 8. Validasi input (name, email unik, password, role)
+Ctrl --> UserE : 9. User::create({name, email, hash(password), role, is_membership=false})
+Ctrl --> UI : 10. redirect()->back() + flash success
+
+' FR-025: perbarui pengguna
+A --> UI : 11. Submit form edit pengguna (PUT /admin/kelola-pengguna/{user})
+UI --> Ctrl : 12. update($user, Request)
+Ctrl --> Ctrl : 13. Validasi input (name, email unik kecuali user ini, role)
+Ctrl --> UserE : 14. $user->update({name, email, role, is_membership,\nmembership_start_at, membership_end_at})
+Ctrl --> UI : 15. redirect()->back() + flash success
+
+' FR-026: hapus pengguna
+A --> UI : 16. Konfirmasi hapus pengguna (DELETE /admin/kelola-pengguna/{user})
+UI --> Ctrl : 17. destroy($user)
+Ctrl --> UserE : 18. $user->delete()
+Ctrl --> UI : 19. redirect()->back() + flash success
+
+@enduml

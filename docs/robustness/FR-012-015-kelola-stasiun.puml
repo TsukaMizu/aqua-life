@@ -1,0 +1,50 @@
+@startuml FR-012-015-KelolaStasiun
+' FR-012: Sistem menampilkan daftar stasiun pengamatan beserta informasinya.
+' FR-013: Sistem memungkinkan penambahan stasiun pengamatan baru.
+' FR-014: Sistem memungkinkan pembaruan data stasiun pengamatan yang sudah ada.
+' FR-015: Sistem memungkinkan penghapusan stasiun pengamatan.
+' Aktor: Operator, Admin
+
+skinparam handwritten false
+skinparam defaultFontSize 12
+skinparam roundcorner 8
+
+title FR-012 – FR-015 – Kelola Stasiun Pengamatan (CRUD)\n(Aktor: Operator / Admin)
+
+actor "Operator/Admin" as U
+boundary "KelolaStasiunPage\n(Inertia View)" as UI
+control "KelolaStasiunController\n(Operator/Admin)" as Ctrl
+entity "Station" as StationE
+entity "GeoZone" as GeoZoneE
+entity "WaterType" as WaterTypeE
+
+' FR-012: tampilkan daftar stasiun
+U --> UI : 1. Buka GET /kelola-station
+UI --> Ctrl : 2. index()
+Ctrl --> StationE : 3. Station::with(['geoZone','waterType','user'])->get()
+Ctrl --> GeoZoneE : 4. Ambil daftar GeoZone
+Ctrl --> WaterTypeE : 5. Ambil daftar WaterType
+Ctrl --> UI : 6. Render daftar stasiun
+UI --> U : 7. Tampilkan tabel stasiun
+
+' FR-013: tambah stasiun
+U --> UI : 8. Submit form tambah stasiun (POST)
+UI --> Ctrl : 9. store(Request)
+Ctrl --> Ctrl : 10. Validasi input
+Ctrl --> StationE : 11. Station::create({name, id_geo_zone, id_type_water, id_user})
+Ctrl --> UI : 12. redirect()->back() + flash success
+
+' FR-014: perbarui stasiun
+U --> UI : 13. Submit form edit stasiun (PUT /{station})
+UI --> Ctrl : 14. update($station, Request)
+Ctrl --> Ctrl : 15. Validasi input
+Ctrl --> StationE : 16. $station->update({name, id_geo_zone, id_type_water})
+Ctrl --> UI : 17. redirect()->back() + flash success
+
+' FR-015: hapus stasiun
+U --> UI : 18. Konfirmasi hapus stasiun (DELETE /{station})
+UI --> Ctrl : 19. destroy($station)
+Ctrl --> StationE : 20. $station->delete()
+Ctrl --> UI : 21. redirect()->back() + flash success
+
+@enduml

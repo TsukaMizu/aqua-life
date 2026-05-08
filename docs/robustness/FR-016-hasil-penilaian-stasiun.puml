@@ -1,0 +1,57 @@
+@startuml FR-016-HasilPenilaianStasiun
+' FR-016: Sistem menampilkan halaman hasil penilaian terakhir dari suatu stasiun dan
+'         memungkinkan pembaruan data riwayat stasiun tersebut.
+' Aktor: Operator, Admin
+
+skinparam handwritten false
+skinparam defaultFontSize 12
+skinparam roundcorner 8
+
+title FR-016 – Lihat & Perbarui Hasil Penilaian Terakhir Stasiun\n(Aktor: Operator / Admin)
+
+actor "Operator/Admin" as U
+boundary "StasiunResultPage\n(Inertia View)" as UI
+control "KelolaStasiunController\n(Operator/Admin)" as Ctrl
+control "WSMCalculator\n(Private Methods)" as Calc
+entity "Station" as StationE
+entity "Result" as ResultE
+entity "StationMainAbiotic" as SMAE
+entity "StationIndexAdditional" as SIAE
+entity "Species" as SpeciesE
+entity "MainAbioticParameter" as MAPE
+entity "AdditionalAbioticParameter" as AAPE
+entity "BioticIndexParameter" as BIPE
+entity "BioticFamily" as BFE
+
+' Lihat hasil penilaian terakhir
+U --> UI : 1. Buka GET /kelola-station/{id}/result
+UI --> Ctrl : 2. result($id)
+Ctrl --> StationE : 3. Station::with(['results', 'mainAbiotic',\n'additionalIndex', 'species'])->findOrFail($id)
+StationE --> ResultE : 4. Load relasi Result (penilaian terakhir)
+Ctrl --> UI : 5. Render halaman hasil penilaian stasiun
+UI --> U : 6. Tampilkan detail hasil penilaian
+
+' Perbarui riwayat stasiun
+U --> UI : 7. Buka GET /kelola-station/{id}/edit
+UI --> Ctrl : 8. edit($id)
+Ctrl --> StationE : 9. Ambil data Station & riwayat terkait
+Ctrl --> MAPE : 10. Ambil data referensi bobot parameter
+Ctrl --> UI : 11. Render form edit riwayat stasiun
+UI --> U : 12. Tampilkan form edit
+
+U --> UI : 13. Submit pembaruan (PUT /{id}/history)
+UI --> Ctrl : 14. updateHistory($id, Request)
+Ctrl --> Ctrl : 15. Validasi input
+Ctrl --> SMAE : 16. StationMainAbiotic::update()
+Ctrl --> SIAE : 17. StationIndexAdditional::update()
+Ctrl --> SpeciesE : 18. Sync Species [opsional]
+Ctrl --> Calc : 19. Kalkulasi ulang WSM
+Calc --> MAPE : 20. Query bobot abiotic utama
+Calc --> AAPE : 21. Query bobot abiotic tambahan
+Calc --> BIPE : 22. Query bobot indeks biotik
+Calc --> BFE : 23. Query bobot family biotik
+Calc --> Ctrl : 24. finalValue, status, conclusion, recommendation
+Ctrl --> ResultE : 25. Result::update({value, status, conclusion, recommendation})
+Ctrl --> UI : 26. redirect() + flash success
+
+@enduml

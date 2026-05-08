@@ -1,0 +1,30 @@
+@startuml FR-010-DetailHasil
+' FR-010: Sistem menampilkan halaman detail hasil penilaian kualitas air berdasarkan ID riwayat.
+' Aktor: Member, Operator, Admin
+
+skinparam handwritten false
+skinparam defaultFontSize 12
+skinparam roundcorner 8
+
+title FR-010 – Detail Hasil Penilaian Kualitas Air\n(Aktor: Member / Operator / Admin)
+
+actor "Member/Operator/Admin" as U
+boundary "HistoryResultPage\n(Inertia View)" as UI
+control "HistoryController\n(Member/Operator/Admin)" as Ctrl
+entity "Result" as ResultE
+entity "Station" as StationE
+entity "StationMainAbiotic" as SMAE
+entity "StationIndexAdditional" as SIAE
+entity "Species" as SpeciesE
+
+U --> UI : 1. Buka GET /history/{id}/result
+UI --> Ctrl : 2. result($id)
+Ctrl --> ResultE : 3. Result::with(['station', 'station.mainAbiotic',\n'station.additionalIndex', 'station.species'])\n->findOrFail($id)
+ResultE --> StationE : 4. Load relasi Station
+StationE --> SMAE : 5. Load StationMainAbiotic
+StationE --> SIAE : 6. Load StationIndexAdditional
+StationE --> SpeciesE : 7. Load Species
+Ctrl --> UI : 8. Render halaman detail hasil
+UI --> U : 9. Tampilkan nilai WSM, status, kesimpulan, rekomendasi, dan data input
+
+@enduml

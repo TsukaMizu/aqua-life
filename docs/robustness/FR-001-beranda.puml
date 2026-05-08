@@ -1,0 +1,20 @@
+@startuml FR-001-Beranda
+' FR-001: Sistem menampilkan halaman beranda bagi pengguna yang belum login.
+' Aktor: Guest
+
+skinparam handwritten false
+skinparam defaultFontSize 12
+skinparam roundcorner 8
+
+title FR-001 – Lihat Halaman Beranda\n(Aktor: Guest)
+
+actor Guest as G
+boundary "BerandaPage\n(Inertia View)" as UI
+control "HomeController" as Ctrl
+
+G --> UI : 1. Buka GET /
+UI --> Ctrl : 2. index()
+Ctrl --> UI : 3. Render halaman beranda
+UI --> G : 4. Tampilkan halaman beranda
+
+@enduml
